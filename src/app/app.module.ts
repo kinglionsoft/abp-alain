@@ -1,33 +1,31 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID, APP_INITIALIZER, Injector } from '@angular/core';
+import { HttpClient, HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 
+import { DelonModule } from './delon.module';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { AppComponent } from './app.component';
 import { RoutesModule } from './routes/routes.module';
 import { LayoutModule } from './layout/layout.module';
-import { StartupService } from './core/services/startup.service';
+import { StartupService } from '@core/startup/startup.service';
 import { DefaultInterceptor } from '@core/net/default.interceptor';
-import { AlainAuthModule, SimpleInterceptor } from '@delon/auth';
-
-// mock
-import { DelonMockModule } from '@delon/mock';
-import * as MOCKDATA from '../../_mock';
-import { environment } from '../environments/environment';
-const MOCKMODULE = !environment.production || environment.chore === true ?
-                    [ DelonMockModule.forRoot({ data: MOCKDATA }) ] : [];
-
-// i18n
-import { I18NService } from './core/i18n/i18n.service';
-import { ALAIN_I18N_TOKEN } from '@delon/theme';
-
+import { SimpleInterceptor } from '@delon/auth';
+// angular i18n
 import { registerLocaleData } from '@angular/common';
 import localeZhHans from '@angular/common/locales/zh-Hans';
 registerLocaleData(localeZhHans);
+// i18n
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { ALAIN_I18N_TOKEN } from '@delon/theme';
+import { I18NService } from '@core/i18n/i18n.service';
+// third
+import { UEditorModule } from 'ngx-ueditor';
+import { NgxTinymceModule } from 'ngx-tinymce';
+// JSON-Schema form
+import { JsonSchemaModule } from '@shared/json-schema/json-schema.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -45,16 +43,12 @@ export function StartupServiceFactory(startupService: StartupService): Function 
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
-        SharedModule.forRoot(),
+        HttpClientModule,
+        DelonModule.forRoot(),
         CoreModule,
+        SharedModule,
         LayoutModule,
         RoutesModule,
-        // mock
-        ...MOCKMODULE,
-        // auth
-        AlainAuthModule.forRoot({
-            login_url: `/passport/login`
-        }),
         // i18n
         TranslateModule.forRoot({
             loader: {
@@ -62,7 +56,22 @@ export function StartupServiceFactory(startupService: StartupService): Function 
                 useFactory: HttpLoaderFactory,
                 deps: [HttpClient]
             }
-        })
+        }),
+        // thirds
+        UEditorModule.forRoot({
+            // **注：** 建议使用本地路径；以下为了减少 ng-alain 脚手架的包体大小引用了CDN，可能会有部分功能受影响
+            // 指定ueditor.js路径目录
+            path: '//apps.bdimg.com/libs/ueditor/1.4.3.1/',
+            // 默认全局配置项
+            options: {
+                themePath: '//apps.bdimg.com/libs/ueditor/1.4.3.1/themes/'
+            }
+        }),
+        NgxTinymceModule.forRoot({
+            baseURL: '//cdn.bootcss.com/tinymce/4.7.4/'
+        }),
+        // JSON-Schema form
+        JsonSchemaModule
     ],
     providers: [
         { provide: LOCALE_ID, useValue: 'zh-Hans' },

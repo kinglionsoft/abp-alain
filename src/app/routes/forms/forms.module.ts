@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { FileUploadModule } from 'ng2-file-upload';
 import { ColorPickerModule, ColorPickerService } from 'ngx-color-picker';
 import { ImageCropperModule } from 'ng2-img-cropper';
 import { SharedModule } from '@shared/shared.module';
@@ -11,13 +10,13 @@ import { ExtendedComponent } from './extended/extended.component';
 import { UploadComponent } from './upload/upload.component';
 import { CropperComponent } from './cropper/cropper.component';
 import { ValidationComponent } from './validation/validation.component';
+import { JSONSchemaComponent } from './json-schema/json-schema.component';
 
 @NgModule({
     imports: [
         SharedModule,
         FormsRoutingModule,
         ColorPickerModule,
-        FileUploadModule,
         ImageCropperModule
     ],
     declarations: [
@@ -25,7 +24,8 @@ import { ValidationComponent } from './validation/validation.component';
         ExtendedComponent,
         UploadComponent,
         CropperComponent,
-        ValidationComponent
+        ValidationComponent,
+        JSONSchemaComponent
     ]
 })
 export class FormsModule { }
