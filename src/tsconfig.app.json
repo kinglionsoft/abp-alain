@@ -13,7 +13,9 @@
         "@testing": [ "testing/" ],
         "@testing/*": [ "testing/*" ],
         "@env": [ "environments/" ],
-        "@env/*": [ "environments/*" ]
+        "@env/*": [ "environments/*" ],
+        "@abp/core": [ "abp/core" ],
+        "@abp/shared": [ "abp/shared" ]
     }
   },
   "exclude": [
