@@ -1,3 +1,4 @@
+import { AppConsts } from '@abp/shared';
 import { NgModule, LOCALE_ID, APP_INITIALIZER, Injector } from '@angular/core';
 import { HttpClient, HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
@@ -29,7 +30,7 @@ import { JsonSchemaModule } from '@shared/json-schema/json-schema.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, `assets/i18n/`, '.json');
+    return new TranslateHttpLoader(http, `${AppConsts.remoteServiceBaseUrl}assets/i18n/`, '.json');
 }
 
 export function StartupServiceFactory(startupService: StartupService): Function {

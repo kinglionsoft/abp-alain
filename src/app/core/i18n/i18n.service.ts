@@ -50,4 +50,22 @@ export class I18NService implements AlainI18NService {
     get currentLang() {
         return this.translate.currentLang || this.translate.getDefaultLang() || this._default;
     }
+
+    /** 增加默认语言之外的语言 */
+    addLangs(langs: { code: string, text: string }[]) {
+        const lans = this._langs.map(item => item.code);        
+        let newlangs: string[] = [];
+        for (let i = 0; i < langs.length; i++) {
+            const l = langs[i];
+            if(!lans.includes(l.code)){
+                this._langs.push({
+                    code: l.code,
+                    text: l.text
+                });
+                newlangs.push(l.code);
+            }
+        }
+        this.translate.addLangs(newlangs);
+    }
 }
+ 
