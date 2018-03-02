@@ -2,8 +2,7 @@
     "app": {
         "name": "Alain",
         "description": "Ng-zorro admin panel front-end framework",
-        "remoteServiceBaseUrl": "http://localhost:21021",
-        "appBaseUrl": "http://localhost:21021"
+        "year": 2018
     },
     "user": {
         "name": "Admin",

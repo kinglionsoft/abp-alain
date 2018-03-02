@@ -1,7 +1,7 @@
 ﻿export class AppConsts {
 
-    static readonly remoteServiceBaseUrl: string = 'http://localhost:21021';
-    static readonly appBaseUrl: string = 'http://localhost:4200';
+    static remoteServiceBaseUrl: string;
+    static appBaseUrl: string;
 
     static readonly userManagement = {
         defaultAdminUserName: 'admin'

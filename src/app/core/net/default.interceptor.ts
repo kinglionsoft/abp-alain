@@ -1,8 +1,9 @@
 import { Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpErrorResponse,
-         HttpSentEvent, HttpHeaderResponse, HttpProgressEvent, HttpResponse, HttpUserEvent,
-       } from '@angular/common/http';
+import {
+    HttpInterceptor, HttpRequest, HttpHandler, HttpErrorResponse,
+    HttpSentEvent, HttpHeaderResponse, HttpProgressEvent, HttpResponse, HttpUserEvent, HttpHeaders,
+} from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
@@ -16,7 +17,7 @@ import { environment } from '@env/environment';
  */
 @Injectable()
 export class DefaultInterceptor implements HttpInterceptor {
-    constructor(private injector: Injector) {}
+    constructor(private injector: Injector) { }
 
     get msg(): NzMessageService {
         return this.injector.get(NzMessageService);
@@ -60,22 +61,31 @@ export class DefaultInterceptor implements HttpInterceptor {
 
         // 统一加上服务端前缀
         let url = req.url;
-        if (!url.startsWith('https://') && !url.startsWith('http://')) {
+        if (!url.startsWith('https://') && !url.startsWith('http://') && !url.startsWith('./assets/')) {
             url = environment.SERVER_URL + url;
         }
 
+        // 加上ABP约定的header
+
+        let headers: HttpHeaders = new HttpHeaders({
+            // 'Authorization': 'Bearer ' + abp.auth.getToken(),
+            '.AspNetCore.Culture': abp.utils.getCookieValue('Abp.Localization.CultureName'),
+            'Abp.TenantId': abp.multiTenancy.getTenantIdCookie() + ''
+        });
+
         const newReq = req.clone({
-            url: url
+            url: url,
+            headers: headers
         });
         return next.handle(newReq).pipe(
-                    mergeMap((event: any) => {
-                        // 允许统一对请求错误处理，这是因为一个请求若是业务上错误的情况下其HTTP请求的状态是200的情况下需要
-                        if (event instanceof HttpResponse && event.status === 200)
-                            return this.handleData(event);
-                        // 若一切都正常，则后续操作
-                        return of(event);
-                    }),
-                    catchError((err: HttpErrorResponse) => this.handleData(err))
-                );
+            mergeMap((event: any) => {
+                // 允许统一对请求错误处理，这是因为一个请求若是业务上错误的情况下其HTTP请求的状态是200的情况下需要
+                if (event instanceof HttpResponse && event.status === 200)
+                    return this.handleData(event);
+                // 若一切都正常，则后续操作
+                return of(event);
+            }),
+            catchError((err: HttpErrorResponse) => this.handleData(err))
+        );
     }
 }
