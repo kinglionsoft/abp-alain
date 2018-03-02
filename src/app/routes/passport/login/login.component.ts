@@ -7,11 +7,13 @@ import { SocialService, SocialOpenType, ITokenService, DA_SERVICE_TOKEN } from '
 import { ReuseTabService } from '@delon/abc';
 import { environment } from '@env/environment';
 
+import { TokenAuthClient, AuthenticateModel } from '@abp/services';
+
 @Component({
     selector: 'passport-login',
     templateUrl: './login.component.html',
-    styleUrls: [ './login.component.less' ],
-    providers: [ SocialService ]
+    styleUrls: ['./login.component.less'],
+    providers: [SocialService, TokenAuthClient]
 })
 export class UserLoginComponent implements OnDestroy {
 
@@ -27,7 +29,9 @@ export class UserLoginComponent implements OnDestroy {
         private settingsService: SettingsService,
         private socialService: SocialService,
         @Optional() @Inject(ReuseTabService) private reuseTabService: ReuseTabService,
-        @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
+        @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+        private tokenClient: TokenAuthClient
+    ) {
         this.form = fb.group({
             userName: [null, [Validators.required, Validators.minLength(5)]],
             password: [null, Validators.required],
@@ -43,6 +47,7 @@ export class UserLoginComponent implements OnDestroy {
     get password() { return this.form.controls.password; }
     get mobile() { return this.form.controls.mobile; }
     get captcha() { return this.form.controls.captcha; }
+    get remember() { return this.form.controls.remember; }
 
     // endregion
 
@@ -79,26 +84,26 @@ export class UserLoginComponent implements OnDestroy {
         }
         // mock http
         this.loading = true;
-        setTimeout(() => {
-            this.loading = false;
-            if (this.type === 0) {
-                if (this.userName.value !== 'admin' || this.password.value !== '888888') {
-                    this.error = `账户或密码错误`;
-                    return;
-                }
-            }
 
+        this.tokenClient.authenticate(new AuthenticateModel({
+            userNameOrEmailAddress: this.userName.value,
+            password: this.password.value,
+            rememberClient: this.remember.value
+        }))
+        .subscribe(result => {
             // 清空路由复用信息
             this.reuseTabService.clear();
             this.tokenService.set({
                 token: '123456789',
                 name: this.userName.value,
-                email: `cipchk@qq.com`,
+                email: ``,
                 id: 10000,
                 time: +new Date
             });
             this.router.navigate(['/']);
-        }, 1000);
+        }, error => {
+            
+        });        
     }
 
     // region: social

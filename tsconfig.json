@@ -26,7 +26,8 @@
         "@env": [ "environments/" ],
         "@env/*": [ "environments/*" ],
         "@abp/core": [ "abp/core" ],
-        "@abp/shared": [ "abp/shared" ]
+        "@abp/shared": [ "abp/shared" ],
+        "@abp/services": [ "abp/services" ]
     }
   }
 }
