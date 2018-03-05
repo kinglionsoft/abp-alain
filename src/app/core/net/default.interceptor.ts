@@ -11,7 +11,7 @@ import { mergeMap, catchError } from 'rxjs/operators';
 import { NzMessageService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
-
+import { AuthOptions, DA_OPTIONS_TOKEN } from '@delon/auth';
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
  */
@@ -66,16 +66,19 @@ export class DefaultInterceptor implements HttpInterceptor {
         }
 
         // 加上ABP约定的header
-
         let headers: HttpHeaders = new HttpHeaders({
             // 'Authorization': 'Bearer ' + abp.auth.getToken(),
             '.AspNetCore.Culture': abp.utils.getCookieValue('Abp.Localization.CultureName'),
             'Abp.TenantId': abp.multiTenancy.getTenantIdCookie() + ''
         });
 
+        // allow_anonymous_key仅用于ITokenService判断是否要添加token，实际请求前去掉请求参数中的allow_anonymous_key
+        const authOptions: AuthOptions = this.injector.get(DA_OPTIONS_TOKEN);
+        
         const newReq = req.clone({
             url: url,
-            headers: headers
+            headers: headers,
+            params: req.params && req.params.delete(authOptions.allow_anonymous_key)
         });
         return next.handle(newReq).pipe(
             mergeMap((event: any) => {

@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs/Observable';
 import { Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { zip } from 'rxjs/observable/zip';
 import { catchError, map } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import { MenuService, SettingsService, TitleService } from '@delon/theme';
 import { ACLService } from '@delon/acl';
 import { I18NService } from '../i18n/i18n.service';
 import { environment } from '@env/environment';
+import { AuthOptions, DA_OPTIONS_TOKEN } from '@delon/auth';
 
 import { AppConsts } from '@abp/shared';
 import * as moment from 'moment';
@@ -27,9 +28,9 @@ export class StartupService {
         private aclService: ACLService,
         private titleService: TitleService,
         private httpClient: HttpClient,
-        private injector: Injector) { 
-            AppConsts.remoteServiceBaseUrl = environment.SERVER_URL;
-        }
+        private injector: Injector) {
+        AppConsts.remoteServiceBaseUrl = environment.SERVER_URL;
+    }
 
     load(): Promise<any> {
         // only works with promises
@@ -91,8 +92,8 @@ export class StartupService {
     }
 
     private getUserConfiguration(): Observable<any> {
-
-        return this.httpClient.get('/YkAbpUserConfiguration/GetAll')
+        const authOptions: AuthOptions = this.injector.get(DA_OPTIONS_TOKEN);
+        return this.httpClient.get('/YkAbpUserConfiguration/GetAll', { params: new HttpParams().set(authOptions.allow_anonymous_key, '1') })
             .map((response: any) => {
                 let result: any = response.result;
                 $.extend(true, abp, result);

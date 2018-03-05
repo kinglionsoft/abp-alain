@@ -204,7 +204,7 @@ const MOCKMODULE = !environment.production || environment.chore === true ?
         AdReuseTabModule.forRoot(), AdFullContentModule.forRoot(), AdXlsxModule.forRoot(), AdZipModule.forRoot(),
         // auth
         AlainAuthModule.forRoot({
-            // ignores: [ `\\/login`, `assets\\/` ],
+            ignores: [ /\.\/assets\//, /\/i18n\// ],
             login_url: `/passport/login`
         }),
         // acl
