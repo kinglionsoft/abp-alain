@@ -28,7 +28,7 @@ export class DefaultInterceptor implements HttpInterceptor {
     }
 
     private isApi(url: string) {
-        return url.startsWith(`${environment.SERVER_URL}\\api\\`);
+        return url.startsWith(`${environment.SERVER_URL}/api/`);
     }
 
     private handleData(event: HttpResponse<any> | HttpErrorResponse): Observable<any> {
@@ -70,20 +70,15 @@ export class DefaultInterceptor implements HttpInterceptor {
         }
 
         // 加上ABP约定的header
-        let headers: HttpHeaders = new HttpHeaders({
-            // 'Authorization': 'Bearer ' + abp.auth.getToken(),
-            '.AspNetCore.Culture': abp.utils.getCookieValue('Abp.Localization.CultureName'),
-            'Abp.TenantId': abp.multiTenancy.getTenantIdCookie() + ''
-        });
+        req.headers.set('.AspNetCore.Culture', abp.utils.getCookieValue('Abp.Localization.CultureName'));
 
         // allow_anonymous_key仅用于ITokenService判断是否要添加token，实际请求前去掉请求参数中的allow_anonymous_key
         const authOptions: AuthOptions = this.injector.get(DA_OPTIONS_TOKEN);
-
         const newReq = req.clone({
             url: url,
-            headers: headers,
             params: req.params && req.params.delete(authOptions.allow_anonymous_key)
         });
+        
         return next.handle(newReq).pipe(
             mergeMap((event: any) => {
                 // 允许统一对请求错误处理，这是因为一个请求若是业务上错误的情况下其HTTP请求的状态是200的情况下需要

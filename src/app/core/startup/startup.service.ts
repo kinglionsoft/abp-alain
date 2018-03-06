@@ -9,10 +9,9 @@ import { MenuService, SettingsService, TitleService } from '@delon/theme';
 import { ACLService } from '@delon/acl';
 import { I18NService } from '../i18n/i18n.service';
 import { environment } from '@env/environment';
-import { AuthOptions, DA_OPTIONS_TOKEN } from '@delon/auth';
 
 import { AppConsts } from '@abp/shared';
-import * as moment from 'moment';
+import { AbpConfigurationService } from '@abp/services';
 
 /**
  * 用于应用启动时
@@ -28,6 +27,7 @@ export class StartupService {
         private aclService: ACLService,
         private titleService: TitleService,
         private httpClient: HttpClient,
+        private abpConfigService: AbpConfigurationService,
         private injector: Injector) {
         AppConsts.remoteServiceBaseUrl = environment.SERVER_URL;
     }
@@ -40,7 +40,7 @@ export class StartupService {
             zip(
                 this.httpClient.get(`/i18n/${this.i18n.defaultLang}.json`),
                 this.httpClient.get('./assets/app-data.json'),
-                this.getUserConfiguration()
+                this.abpConfigService.getUserConfiguration()
             ).pipe(
                 // 接收其他拦截器后产生的异常消息
                 catchError(([langData, appData, abpConfig]) => {
@@ -49,6 +49,16 @@ export class StartupService {
                 })
             ).subscribe(([langData, appData, abpConfig]) => {
                 // setting language data
+                this.translate.setTranslation(this.i18n.defaultLang, langData);
+                this.translate.setDefaultLang(this.i18n.defaultLang);
+                // application data
+                // 应用信息：包括站点名、描述、年份
+                this.settingService.setApp(appData.app);
+                // ACL：设置权限为全量
+                this.aclService.setFull(false);
+                // 设置页面标题的后缀
+                this.titleService.suffix = appData.app.name;
+                // setting language data
                 let langs = abpConfig.localization.languages.map(function (l) {
                     return {
                         code: l.name,
@@ -56,20 +66,6 @@ export class StartupService {
                     }
                 });
                 this.i18n.addLangs(langs);
-                this.translate.setTranslation(this.i18n.defaultLang, langData);
-                this.translate.setDefaultLang(this.i18n.defaultLang);
-
-                // application data
-                // 应用信息：包括站点名、描述、年份
-                this.settingService.setApp(appData.app);
-                // 用户信息：包括姓名、头像、邮箱地址
-                // this.settingService.setUser(appData.user);
-                // ACL：设置权限为全量
-                this.aclService.setFull(false);
-                // 初始化菜单
-                this.menuService.add(appData.menu);
-                // 设置页面标题的后缀
-                this.titleService.suffix = appData.app.name;
             },
                 () => { },
                 () => {
@@ -77,35 +73,5 @@ export class StartupService {
                 });
 
         });
-    }
-
-    private static getCurrentClockProvider(currentProviderName: string): abp.timing.IClockProvider {
-        if (currentProviderName === 'unspecifiedClockProvider') {
-            return abp.timing.unspecifiedClockProvider;
-        }
-
-        if (currentProviderName === 'utcClockProvider') {
-            return abp.timing.utcClockProvider;
-        }
-
-        return abp.timing.localClockProvider;
-    }
-
-    private getUserConfiguration(): Observable<any> {
-        const authOptions: AuthOptions = this.injector.get(DA_OPTIONS_TOKEN);
-        return this.httpClient.get('/YkAbpUserConfiguration/GetAll', { params: new HttpParams().set(authOptions.allow_anonymous_key, '1') })
-            .map((response: any) => {
-                let result: any = response.result;
-                $.extend(true, abp, result);
-
-                abp.clock.provider = StartupService.getCurrentClockProvider(result.clock.provider);
-
-                moment.locale(abp.localization.currentLanguage.name);
-
-                if (abp.clock.provider.supportsMultipleTimezone) {
-                    moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
-                }
-                return result;
-            });
     }
 }

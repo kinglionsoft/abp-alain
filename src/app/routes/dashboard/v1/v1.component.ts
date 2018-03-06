@@ -8,7 +8,8 @@ import { _HttpClient } from '@delon/theme';
 })
 export class DashboardV1Component implements OnInit {
 
-    constructor(private http: _HttpClient, public msg: NzMessageService) { }
+    constructor(private http: _HttpClient, 
+        public msg: NzMessageService ) { }
 
     todoData: any[] = [
         { completed: true, avatar: '1', name: '苏先生', content: `请告诉我，我应该说点什么好？` },
@@ -26,6 +27,7 @@ export class DashboardV1Component implements OnInit {
     offlineChartData: any[] = [];
 
     ngOnInit() {
+        // for demo
         this.http.get('/chart').subscribe((res: any) => {
             this.webSite = res.visitData.slice(0, 10);
             this.salesData = res.salesData;

@@ -10,6 +10,11 @@ export class I18NService implements AlainI18NService {
 
     private _default = 'zh-CN';
 
+    private _defaultLangs = [
+        { code: 'en', text: 'English' },
+        { code: 'zh-CN', text: '中文' }
+    ];
+
     private _langs = [
         { code: 'en', text: 'English' },
         { code: 'zh-CN', text: '中文' }
@@ -31,7 +36,7 @@ export class I18NService implements AlainI18NService {
         lang = lang || this.translate.getDefaultLang();
         this.nzLocalService.setLocale(lang === 'en' ? enUS : zhCN);
         // need reload router because of ng-zorro-antd local system
-        if (!firstLoad) this.injector.get(Router).navigate([ '/' ]);
+        if (!firstLoad) this.injector.get(Router).navigate(['/']);
         return this.translate.use(lang);
     }
     /** 获取语言列表 */
@@ -53,19 +58,18 @@ export class I18NService implements AlainI18NService {
 
     /** 增加默认语言之外的语言 */
     addLangs(langs: { code: string, text: string }[]) {
-        const lans = this._langs.map(item => item.code);        
-        let newlangs: string[] = [];
+        const defaultLangs = this._defaultLangs.map(item => item.code);
+        this._langs = this._defaultLangs.map(i => i); // clone
         for (let i = 0; i < langs.length; i++) {
             const l = langs[i];
-            if(!lans.includes(l.code)){
+            if (!defaultLangs.includes(l.code)) {
                 this._langs.push({
                     code: l.code,
                     text: l.text
                 });
-                newlangs.push(l.code);
             }
         }
-        this.translate.addLangs(newlangs);
+        this.translate.langs = [];
+        this.translate.addLangs(this._langs.map( l => l.code));
     }
 }
- 

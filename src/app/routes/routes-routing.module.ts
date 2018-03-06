@@ -26,6 +26,7 @@ const routes: Routes = [
         path: '',
         component: LayoutDefaultComponent,
         canActivate: [ ACLGuard ],
+        data: { guard: '__user' },
         children: [
             { path: '', redirectTo: 'dashboard/v1', pathMatch: 'full' },
             { path: 'dashboard', redirectTo: 'dashboard/v1', pathMatch: 'full' },
