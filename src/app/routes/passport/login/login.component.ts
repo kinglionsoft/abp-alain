@@ -8,6 +8,7 @@ import { ReuseTabService } from '@delon/abc';
 import { environment } from '@env/environment';
 
 import { TokenAuthClient, AuthenticateModel } from '@abp/services';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'passport-login',
@@ -86,24 +87,30 @@ export class UserLoginComponent implements OnDestroy {
         this.loading = true;
 
         this.tokenClient.authenticate(new AuthenticateModel({
-            userNameOrEmailAddress: this.userName.value,
-            password: this.password.value,
-            rememberClient: this.remember.value
-        }))
-        .subscribe(result => {
-            // 清空路由复用信息
-            this.reuseTabService.clear();
-            this.tokenService.set({
-                token: '123456789',
-                name: this.userName.value,
-                email: ``,
-                id: 10000,
-                time: +new Date
+                userNameOrEmailAddress: this.userName.value,
+                password: this.password.value,
+                rememberClient: this.remember.value
+            }))
+            .pipe(
+                finalize(() => {
+                    this.loading = false;
+                })
+            )
+            .subscribe(res => {
+                // 清空路由复用信息
+                this.reuseTabService.clear();
+                this.tokenService.set({
+                    token: res.result.accessToken,
+                    name: this.userName.value,
+                    email: ``,
+                    id: res.result.userId,
+                    time: +new Date,
+                    exp: res.result.expireInSeconds
+                });
+                this.router.navigate(['/']);
+            }, error => {
+                console.dir(error);
             });
-            this.router.navigate(['/']);
-        }, error => {
-            
-        });        
     }
 
     // region: social

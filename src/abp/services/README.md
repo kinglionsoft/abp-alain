@@ -1,22 +1,8 @@
-# NSwag
+# API 客户端代理服务类
 clients.ts是根据swagger生成的文档生成的客户端代理类。
 
-## NSwag使用方法
-* 下载[NSwagStudio](https://github.com/RSuter/NSwag/wiki/NSwagStudio)，安装。若浏览下载失败，使用迅雷下载。
-* 打开本目录下的abp.nswag，确认swagger生成的API规范地址正确，并启动API主程序。
-
-```js
-{
-    "swaggerGenerator": {
-    "fromSwagger": {
-      "url": "http://localhost:21021/swagger/v1/swagger.json", //
-      "output": null
-    }
-  }
-}
-```
-* 启动NSwagStudio，File->Open，打开本目录下的abp.nswag;
-* 右侧Outputs中，点击【Generate Files】。
+## 生成方法
+见 YkAbp 解决方案中的YkAbp.AngularClientGenerator项目。
 
 ## 服务代理类使用方法
 

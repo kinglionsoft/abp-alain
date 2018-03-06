@@ -27,22 +27,26 @@ export class DefaultInterceptor implements HttpInterceptor {
         setTimeout(() => this.injector.get(Router).navigateByUrl(url));
     }
 
+    private isApi(url: string) {
+        return url.startsWith(`${environment.SERVER_URL}\\api\\`);
+    }
+
     private handleData(event: HttpResponse<any> | HttpErrorResponse): Observable<any> {
         // 可能会因为 `throw` 导出无法执行 `_HttpClient` 的 `end()` 操作
         this.injector.get(_HttpClient).end();
         // 业务处理：一些通用操作
         switch (event.status) {
             case 200:
-                // 业务层级错误处理，以下假如响应体的 `status` 若不为 `0` 表示业务级异常
-                // 并显示 `error_message` 内容
-
-                // const body: any = event instanceof HttpResponse && event.body;
-                // if (body && body.status !== 0) {
-                //     this.msg.error(body.error_message);
-                //     // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：
-                //     // this.http.get('/').subscribe() 并不会触发
-                //     return ErrorObservable.throw(event);
-                // }
+                // 业务层级错误处理
+                if (this.isApi(event.url)) {
+                    const body: any = event instanceof HttpResponse && event.body;
+                    if (body && !body.success) {
+                        this.msg.error(body.error);
+                        // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：
+                        // this.http.get('/').subscribe() 并不会触发
+                        return ErrorObservable.throw(event);
+                    }
+                }
                 break;
             case 401: // 未登录状态码
                 this.goTo('/passport/login');
@@ -74,7 +78,7 @@ export class DefaultInterceptor implements HttpInterceptor {
 
         // allow_anonymous_key仅用于ITokenService判断是否要添加token，实际请求前去掉请求参数中的allow_anonymous_key
         const authOptions: AuthOptions = this.injector.get(DA_OPTIONS_TOKEN);
-        
+
         const newReq = req.clone({
             url: url,
             headers: headers,

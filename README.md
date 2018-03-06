@@ -29,7 +29,8 @@ npm run serve:hmr
 
 #### Application
 
-### nswag
+### API服务代码生成
+基于NSwag自动生成服务端API的调用代码，详见[src/abp/services/README.md](src/abp/services/README.md)。
 
 ## License
 
