@@ -11,14 +11,11 @@ export class I18NService implements AlainI18NService {
     private _default = 'zh-CN';
 
     private _defaultLangs = [
-        { code: 'en', text: 'English' },
-        { code: 'zh-CN', text: '中文' }
+        { code: 'zh-CN', text: '中文' },
+        { code: 'en', text: 'English' }
     ];
 
-    private _langs = [
-        { code: 'en', text: 'English' },
-        { code: 'zh-CN', text: '中文' }
-    ];
+    private _langs = [];
 
     constructor(
         settings: SettingsService,
@@ -27,9 +24,10 @@ export class I18NService implements AlainI18NService {
         private injector: Injector
     ) {
         const defaultLan = settings.layout.lang || translate.getBrowserLang();
-        const lans = this._langs.map(item => item.code);
+        const lans = this._defaultLangs.map(item => item.code);
         this._default = lans.includes(defaultLan) ? defaultLan : lans[0];
         translate.addLangs(lans);
+        this._langs = [...this._defaultLangs];
     }
 
     use(lang: string = null, firstLoad = true): Observable<any> {
@@ -70,6 +68,6 @@ export class I18NService implements AlainI18NService {
             }
         }
         this.translate.langs = [];
-        this.translate.addLangs(this._langs.map( l => l.code));
+        this.translate.addLangs(this._langs.map(l => l.code));
     }
 }

@@ -49,6 +49,13 @@ export class StartupService {
                 })
             ).subscribe(([langData, appData, abpConfig]) => {
                 // setting language data
+                let langs = abpConfig.localization.languages.map(function (l) {
+                    return {
+                        code: l.name,
+                        text: l.displayName
+                    }
+                });
+                this.i18n.addLangs(langs);
                 this.translate.setTranslation(this.i18n.defaultLang, langData);
                 this.translate.setDefaultLang(this.i18n.defaultLang);
                 // application data
@@ -57,15 +64,9 @@ export class StartupService {
                 // ACL：设置权限为全量
                 this.aclService.setFull(false);
                 // 设置页面标题的后缀
-                this.titleService.suffix = appData.app.name;
-                // setting language data
-                let langs = abpConfig.localization.languages.map(function (l) {
-                    return {
-                        code: l.name,
-                        text: l.displayName
-                    }
-                });
-                this.i18n.addLangs(langs);
+                this.titleService.suffix = appData.app.name;    
+                // 菜单
+                this.menuService.resume();                
             },
                 () => { },
                 () => {
