@@ -32,6 +32,9 @@ npm run serve:hmr
 ### API服务代码生成
 基于NSwag自动生成服务端API的调用代码，详见[src/abp/services/README.md](src/abp/services/README.md)。
 
+### ICON
+[SIMPLE LINE ICONS](https://pagellapolitica.it/static/plugins/line-icons/)
+
 ## License
 
 The MIT License

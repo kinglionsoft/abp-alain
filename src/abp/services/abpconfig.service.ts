@@ -62,8 +62,45 @@ export class AbpConfigurationService {
     }
 
     /**将ABP的菜单格式化为alain的格式 */
-    private adapteFromAbpNav(abpMenus: any[]): Menu[] {
-        return [];
+    private adapteFromAbpNav(abpMenus: abp.nav.IMenuItem[]): Menu[] {
+        return abpMenus.map( menu => this.mapAbpNavItem(menu));
+    }
+
+    private mapAbpNavItem(menu: abp.nav.IMenuItem): Menu {
+       return {
+            /** 文本 */
+               text: menu.displayName,
+               /** i18n主键 */
+               i18n: menu.customData && menu.customData.translate,
+               /** 是否菜单组 */
+               group: menu.customData && menu.customData.group,
+               /** angular 路由 */
+               link: menu.url,
+               /** 外部链接 */
+               externalLink: null,
+               /** 链接 target */
+               // target?: '_blank' | '_self' | '_parent' | '_top',
+               /** 图标 */
+               icon: menu.icon,
+               /** 徽标数，展示的数字。（注：`group:true` 无效） */
+               badge: undefined,
+               /** 徽标数，显示小红点 */
+               badge_dot: undefined,
+               /** 徽标数，设置 Badge 颜色 （默认：error， 所有颜色值见：https://github.com/cipchk/ng-alain/blob/master/_documents/utils.md#色彩） */
+               badge_status: undefined,
+               /** 是否隐藏 */
+               hide: false,
+               /** ACL配置，若导入 `@delon/acl` 时自动有效, ABP不会返回无权限的菜单 */
+               acl: undefined,
+               /** 是否快捷菜单项 */
+               shortcut: menu.customData && menu.customData.shortcut,
+               /** 快捷菜单根节点 */
+               shortcut_root: menu.customData && menu.customData.shortcut_root,
+               /** 是否允许复用，需配合 `reuse-tab` 组件 */
+               reuse: menu.customData && menu.customData.reuse,
+               /** 二级菜单 */
+               children: menu.items && menu.items.map( m => this.mapAbpNavItem(m))
+       };
     }
 
     /**暂时不能注入TokenService来获取token，待优化 */
