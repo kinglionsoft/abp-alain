@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared/shared.module';
 import { RouteRoutingModule } from './routes-routing.module';
 // dashboard pages
-import { DashboardV1Component } from './dashboard/v1/v1.component';
+import { DashboardHostComponent } from './dashboard/host/host.component';
 import { DashboardAnalysisComponent } from './dashboard/analysis/analysis.component';
 import { DashboardMonitorComponent } from './dashboard/monitor/monitor.component';
 import { DashboardWorkplaceComponent } from './dashboard/workplace/workplace.component';
@@ -20,7 +20,7 @@ import { Exception500Component } from './exception/500.component';
 @NgModule({
     imports: [ SharedModule, RouteRoutingModule ],
     declarations: [
-        DashboardV1Component,
+        DashboardHostComponent,
         DashboardAnalysisComponent,
         DashboardMonitorComponent,
         DashboardWorkplaceComponent,

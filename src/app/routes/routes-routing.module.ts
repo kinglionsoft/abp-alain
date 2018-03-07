@@ -7,7 +7,7 @@ import { LayoutDefaultComponent } from '../layout/default/default.component';
 import { LayoutFullScreenComponent } from '../layout/fullscreen/fullscreen.component';
 import { LayoutPassportComponent } from '../layout/passport/passport.component';
 // dashboard pages
-import { DashboardV1Component } from './dashboard/v1/v1.component';
+import { DashboardHostComponent } from './dashboard/host/host.component';
 import { DashboardAnalysisComponent } from './dashboard/analysis/analysis.component';
 import { DashboardMonitorComponent } from './dashboard/monitor/monitor.component';
 import { DashboardWorkplaceComponent } from './dashboard/workplace/workplace.component';
@@ -28,9 +28,9 @@ const routes: Routes = [
         canActivate: [ ACLGuard ],
         data: { guard: '__user' },
         children: [
-            { path: '', redirectTo: 'dashboard/v1', pathMatch: 'full' },
-            { path: 'dashboard', redirectTo: 'dashboard/v1', pathMatch: 'full' },
-            { path: 'dashboard/v1', component: DashboardV1Component},
+            { path: '', redirectTo: 'dashboard/host', pathMatch: 'full' },
+            { path: 'dashboard', redirectTo: 'dashboard/host', pathMatch: 'full' },
+            { path: 'dashboard/host', component: DashboardHostComponent},
             { path: 'dashboard/analysis', component: DashboardAnalysisComponent },
             { path: 'dashboard/monitor', component: DashboardMonitorComponent },
             { path: 'dashboard/workplace', component: DashboardWorkplaceComponent },

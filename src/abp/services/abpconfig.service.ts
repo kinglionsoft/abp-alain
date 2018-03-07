@@ -69,7 +69,7 @@ export class AbpConfigurationService {
     private mapAbpNavItem(menu: abp.nav.IMenuItem): Menu {
         return {
             /** 文本 */
-            text: menu.displayName,
+            text: menu.customData && menu.customData.i18n || menu.displayName,
             /** i18n主键 */
             i18n: menu.customData && menu.customData.i18n,
             /** 是否菜单组 */
