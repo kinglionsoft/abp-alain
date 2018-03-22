@@ -33,6 +33,7 @@ export class AbpConfigurationService {
                     moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
                 }
                 // menus 
+                this.menuService.clear();
                 this.menuService.add(this.adapteFromAbpNav(abp.nav.menus.AdminPanel.items));
                 // roles
                 let roles: string[] = [];

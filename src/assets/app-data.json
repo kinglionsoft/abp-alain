@@ -1,7 +1,7 @@
 {
     "app": {
-        "name": "Alain",
-        "description": "Ng-zorro admin panel front-end framework",
+        "name": "管理平台",
+        "description": "这是一个后台和管理平台",
         "year": 2018
     },
     "user": {

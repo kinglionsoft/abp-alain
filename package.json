@@ -4,9 +4,9 @@
   "version": "0.0.1-rc1",
   "description": "ng-zorro-antd admin panel front-end framework with ABP",
   "author": "cipchk",
-  "homepage": "https://cipchk.github.io/ng-alain/",
+  "homepage": "https://github.com/kinglionsoft/abp-alain",
   "bugs": {
-    "url": "https://github.com/cipchk/ng-alain/issues"
+    "url": "https://github.com/kinglionsoft/abp-alain/issues"
   },
   "engines": {
     "node": ">= 4.2.1",

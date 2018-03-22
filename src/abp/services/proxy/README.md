@@ -6,7 +6,7 @@
 
 ## 服务代理类使用方法
 
-### 方式一：按需注入 【建议】
+### 方式一：按需注册 【建议】
 * 通用的服务可以注入到 /src/app/core/core.module.ts，否则仅需注入到需要的Module或者Component。
 
 ```ts
@@ -24,7 +24,7 @@ export class XXXModule {
 
 ```
 
-#### 方式二：全量注入
+#### 方式二：全量注册
 * 将AbpServiceModule导入到AppModule中：
 ```ts
 import { AbpServiceModule } from '@abp/services';
